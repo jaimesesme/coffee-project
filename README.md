@@ -1,0 +1,2 @@
+# coffee-project
+This project aims to identify which Austin coffee shops and relevant hybrid venues are best suited for productive work, working late, or socializing by using business attributes and customer-experience signals rather than popularity alone.
