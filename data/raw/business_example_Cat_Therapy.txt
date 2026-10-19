@@ -1,0 +1,13 @@
+{'WheelchairAccessible': 'True',
+ 'WiFi': "u'free'",
+ 'DogsAllowed': 'False',
+ 'BikeParking': 'True',
+ 'Caters': 'False',
+ 'BusinessParking': "{'garage': None, 'street': True, 'validated': False, "
+                    "'lot': None, 'valet': False}",
+ 'NoiseLevel': "u'quiet'",
+ 'RestaurantsPriceRange2': '1',
+ 'GoodForKids': 'True',
+ 'OutdoorSeating': 'False',
+ 'RestaurantsTakeOut': 'False',
+ 'BusinessAcceptsCreditCards': 'True'}
