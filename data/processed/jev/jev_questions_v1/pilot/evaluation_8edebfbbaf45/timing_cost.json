@@ -1,0 +1,14 @@
+{
+  "successful": 100,
+  "failed_attempts": 0,
+  "wall_seconds_recorded": 50.482147875009105,
+  "median_request_seconds": 0.11469766707159579,
+  "p95_request_seconds": 0.2990940962161403,
+  "successful_reviews_per_minute": 118.85389692323818,
+  "input_tokens_known": 169697,
+  "output_tokens_known": 31723,
+  "estimated_usd_known_usage": 0.007127274,
+  "attempts_without_usage": 0,
+  "input_usd_per_million": 0.042,
+  "output_usd_per_million": 0.0
+}
