@@ -91,11 +91,18 @@ def parse_answers(response):
 
 
 def run_jev(df, specs, client, model, version, path, stage='pilot', min_interval=.5, limit=100):
-    """Sequential pilot for interpretable latency. No requests at module import."""
-    if stage not in ('pilot', 'holdout'):
-        raise ValueError('This runner is for pilot/holdout only, never the full corpus.')
-    if len(df) != (100 if stage == 'pilot' else 200):
+    """Resumable sequential labeling; full runs use stage='full', limit=None."""
+    if stage not in ('pilot', 'holdout', 'full'):
+        raise ValueError('Stage must be pilot, holdout, or full.')
+    if stage != 'full' and len(df) != (100 if stage == 'pilot' else 200):
         raise ValueError('Expected 100 pilot or 200 holdout reviews.')
+    if df.empty or not df.review_id.is_unique:
+        raise ValueError('Source must be nonempty with unique review IDs.')
+    for column in ['review_id', 'business_id', 'text']:
+        if not df[column].map(lambda value: isinstance(value, str) and bool(value.strip())).all():
+            raise ValueError(f'Source requires nonempty strings in {column}.')
+    if limit is not None and (type(limit) is not int or limit < 1):
+        raise ValueError('Limit must be a positive integer or None for all reviews.')
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     contract = contract_for(df, specs, model, version, stage)
@@ -112,7 +119,12 @@ def run_jev(df, specs, client, model, version, path, stage='pilot', min_interval
             with config_path.open('x') as file:
                 json.dump(config, file, indent=2)
         done = {r['review_id'] for r in saved}
-        pending = df.loc[~df.review_id.isin(done)].head(limit)
+        if not done.issubset(set(df.review_id)):
+            raise ValueError('Saved predictions contain review IDs outside this dataset.')
+        pending = df.loc[~df.review_id.isin(done)]
+        if limit is not None:
+            pending = pending.head(limit)
+        print(f'{stage}: {len(done)}/{len(df)} already saved; {len(pending)} requests pending.')
         # Raw question dictionaries are supported by the TypeSafe SDK.
         session_id = uuid.uuid4().hex
         started = time.perf_counter()
@@ -150,7 +162,10 @@ def run_jev(df, specs, client, model, version, path, stage='pilot', min_interval
                                            'business_id': row['business_id'], 'session_id': session_id,
                                            'label_date': utcnow(), **metadata, **error})
                     failed += 1
-                print(f'{stage}: {len(done)}/{len(df)} saved; this session failures={failed}')
+                if stage != 'full' or error or attempted % 100 == 0 or attempted == len(pending):
+                    elapsed_session = time.perf_counter() - started
+                    print(f'{stage}: {len(done)}/{len(df)} saved; this session failures={failed}; '
+                          f'elapsed={elapsed_session / 60:.1f} min')
                 if error and error['status_code'] in (401, 403, 429):
                     print('Stopped for authorization/rate limit. Inspect error, wait or fix settings, then resume.')
                     break

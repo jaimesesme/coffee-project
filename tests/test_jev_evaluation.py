@@ -28,6 +28,34 @@ class Tests(unittest.TestCase):
         labels,_=j.parse_answers(Response());self.assertEqual(set(labels.values()),{0})
         with self.assertRaises(ValueError):j.parse_answers(Response(True))
 
+    def test_full_dataset_resume_and_source_change(self):
+        source = self.df.head(3)[['review_id', 'business_id', 'text']].copy()
+        calls = []
+        def fake(**kw):
+            calls.append(kw)
+            return Response()
+        client = SimpleNamespace(system_one=fake)
+        args = (source, self.spec, client, 'jev-1.14.0', 'full_v1', self.p)
+        j.run_jev(*args, stage='full', limit=1, min_interval=0)
+        saved = j.run_jev(*args, stage='full', limit=None, min_interval=0)
+        self.assertEqual(len(saved), 3)
+        self.assertEqual(len(calls), 3)
+        j.run_jev(*args, stage='full', limit=None, min_interval=0)
+        self.assertEqual(len(calls), 3)
+        self.assertTrue(all(set(c) == {'state', 'questions'} for c in calls))
+        source.loc[0, 'text'] = 'changed'
+        with self.assertRaises(ValueError):
+            j.run_jev(*args, stage='full', limit=None, min_interval=0)
+        self.assertEqual(len(calls), 3)
+
+    def test_full_source_validation_before_requests(self):
+        client = SimpleNamespace(system_one=lambda **kw: self.fail('Unexpected API call'))
+        source = self.df.head(3).copy()
+        source.loc[0, 'text'] = ' '
+        with self.assertRaises(ValueError):
+            j.run_jev(source, self.spec, client, 'jev-1.14.0', 'full_v1', self.p,
+                      stage='full', limit=None, min_interval=0)
+
     def test_run_resume_cost_and_no_human_leak(self):
         calls=[]
         def fake(**kw):

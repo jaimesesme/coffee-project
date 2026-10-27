@@ -1,3 +1,0 @@
-
-Each qualifier must have at least 90% agreement with human labels.
-Review positive and negative label accuracy separately.

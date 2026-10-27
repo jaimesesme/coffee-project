@@ -30,8 +30,7 @@ class ReviewLabels(BaseModel):
     enough_seating: Literal[-1, 0, 1]
     outlets_available: Literal[-1, 0, 1]
     work_friendly: Literal[-1, 0, 1]
-    good_drinks: Literal[-1, 0, 1]
-    fun_atmosphere: Literal[-1, 0, 1]
+
 
 
 QUALIFIERS = list(ReviewLabels.model_fields)
