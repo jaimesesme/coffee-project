@@ -1,0 +1,9 @@
+qualifier,disagreements_jev,macro_f1_present_classes_jev,disagreements_gpt,macro_f1_present_classes_gpt,fewer_disagreements_with_jev
+good_wifi,0,1.0,0,1.0,0
+easy_parking,0,1.0,0,1.0,0
+quiet_atmosphere,2,0.8281786941580755,3,0.6613756613756614,1
+enough_seating,3,0.8464464464464464,3,0.8683501683501683,0
+outlets_available,0,1.0,0,1.0,0
+work_friendly,0,1.0,2,0.6631944444444445,2
+good_drinks,11,0.8474680535749238,4,0.9171133662936941,-7
+fun_atmosphere,17,0.7200124381332436,6,0.8978937728937728,-11

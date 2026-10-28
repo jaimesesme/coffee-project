@@ -1,0 +1,9 @@
+qualifier,evaluated_reviews,disagreements,agreement_pct,macro_f1_present_classes
+good_wifi,100,0,100.0,1.0
+easy_parking,100,0,100.0,1.0
+quiet_atmosphere,100,2,98.0,0.8281786941580755
+enough_seating,100,3,97.0,0.8464464464464464
+outlets_available,100,0,100.0,1.0
+work_friendly,100,0,100.0,1.0
+good_drinks,100,11,89.0,0.8474680535749238
+fun_atmosphere,100,17,83.0,0.7200124381332436
